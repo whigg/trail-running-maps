@@ -1,7 +1,7 @@
 # trail-running-maps
 Tracks and heatmaps using the GPS tracks. 
 
-The code use the fabulous [folium](https://pypi.python.org/pypi/folium) packages that allows us to interact with the [leaflet](http://leafletjs.com/) library.
+The code use the fabulous [folium](https://pypi.python.org/pypi/folium) package (version 0.2.0) that allows us to interact with the [leaflet](http://leafletjs.com/) library.
 
 The GPX tracks are either
 * downloaded from [http://www.wikiloc.com/](wikiloc),
