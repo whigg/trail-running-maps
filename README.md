@@ -3,7 +3,7 @@ Tracks and heatmaps using the GPS tracks.
 
 The code use the fabulous [folium](https://pypi.python.org/pypi/folium) package (version 0.2.0) that allows us to interact with the [leaflet](http://leafletjs.com/) library.
 
-![](./figures/grancanaria_heatmap.png?raw=true =350x)
+![](./figures/grancanaria_heatmap.png?raw=true)
 
 The GPX tracks are either
 * downloaded from my [http://www.wikiloc.com/](wikiloc) account,
