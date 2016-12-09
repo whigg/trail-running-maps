@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>
+			High-frequency radar systems
+		</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.css">
+		<style type="text/css">
+			#map { height : 750px; }
+			.legend { background : white; line-height ; 2 em}
+			.legend i { width : 5em; float : left}
+		</style>
+	</head>
+	<body>
+		<h1>High-frequency radar systems</h1>
+		<div id="map"></div>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.js"></script>
+		</script>
+		
+		
+		<script>
+			var countriesLayer;
+			
+			function highlightFeature(e){
+				var layer = e.target;
+				layer.setStyle(
+					{
+						weight : 5,
+						color : 'black',
+						fillOpacity : 0
+					}
+				);
+				if(!L.Browser.ie && !L.Browser.opera){
+					layer.bring.ToFront();
+				}
+			}
+			
+			function resetHighlight(e){
+				countriesLayer.resetStyle(e.target);
+			}
+			
+			function zoomToFeature(e){
+				map.fitBounds(e.target.getBounds());
+			}
+			
+			function countriesOnEachFeature(feature, layer){
+				layer.on(
+					{
+						mouseover : highlightFeature,
+						mouseout : resetHighlight,
+						click : zoomToFeature
+					}
+				)
+			}
+			
+			var map = L.map('map').setView([40., 5.], 6);
+			
+			var OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 19,
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+			});
+			
+			var CartoDB_PositronNoLabels = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+				subdomains: 'abcd',
+				maxZoom: 19
+			});
+			
+			var CartoDB_DarkMatter = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+				subdomains: 'abcd',
+				maxZoom: 19
+			});
+			
+			var baseMaps = {
+				"OSM": OpenStreetMap_Mapnik,
+				"CartoDB Dark": CartoDB_DarkMatter
+			};
+			
+			L.control.layers(baseMaps).addTo(map);
+			
+			map.addLayer(CartoDB_PositronNoLabels)
+			
+			var radarIcon = L.icon({
+				iconUrl: 'images/radar_map.png',
+				iconSize:     [40, 40], // size of the icon
+				iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
+				popupAnchor:  [-10, -10] // point from which the popup should open relative to the iconAnchor
+			});
+
+			
+			var radarList = [
+					["Galfi",38.951833, 1.2191667, 'images/logo_socib.png'],
+					["Form",38.66616, 1.38866, 'images/logo_socib.png']
+					];
+						
+					
+			for (var i = 0; i < radarList.length; i++) {
+				
+				var radarIcon = L.icon({
+					iconUrl:  'http://socib.es/users/ctroupin/HFradar_map/HFradar/images/radar_map.png',
+					iconSize:     [25, 25], // size of the icon
+					iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
+					popupAnchor:  [-10, -10] // point from which the popup should open relative to the iconAnchor
+				});
+					
+				var marker = L.marker([radarList[i][1],radarList[i][2]], {icon: radarIcon})
+					.bindPopup("<b>" + radarList[i][0] + "</b> <br>" + "<img src=" + radarList[i][3] + " width=50/> <br>" + radarList[i][1] + " ºN <br>" + radarList[i][2] + " ºE", maxWidth=20)
+					.addTo(map);
+										
+				var circle = L.circle([radarList[i][1],radarList[i][2]], 500, {
+					color: 'black',
+					fillColor: 'black',
+					fillOpacity: 0.99
+				}).addTo(map);
+				
+			}
+					
+			
+			
+		</script>
+	</body>
+</html>
+
