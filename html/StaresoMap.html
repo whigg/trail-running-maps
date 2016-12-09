@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>
+			STARESO map
+		</title>
+		<link rel="stylesheet" href="lib/leaflet/leaflet.css" />
+		<script src ="lib/leaflet/leaflet.js"></script>
+		<style type="text/css">
+			#map { height : 750px; }
+			.legend { background : white; line-height ; 2 em}
+			.legend i { width : 5em; float : left}
+		</style>
+	</head>
+	<body>
+		<h1>STARESO</h1>
+		<div id="map"></div>
+		
+		<script>
+			var countriesLayer;
+			
+			function highlightFeature(e){
+				var layer = e.target;
+				layer.setStyle(
+					{
+						weight : 5,
+						color : 'black',
+						fillOpacity : 0
+					}
+				);
+				if(!L.Browser.ie && !L.Browser.opera){
+					layer.bring.ToFront();
+				}
+			}
+			
+			function resetHighlight(e){
+				countriesLayer.resetStyle(e.target);
+			}
+			
+			function zoomToFeature(e){
+				map.fitBounds(e.target.getBounds());
+			}
+			
+			function countriesOnEachFeature(feature, layer){
+				layer.on(
+					{
+						mouseover : highlightFeature,
+						mouseout : resetHighlight,
+						click : zoomToFeature
+					}
+				)
+			}
+			
+			var map = L.map('map').setView([42.574075, 8.739624], 15);
+			
+			var OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 19,
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+			});
+			
+			var CartoDB_PositronNoLabels = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+				subdomains: 'abcd',
+				maxZoom: 19
+			});
+			
+			var CartoDB_DarkMatter = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+				subdomains: 'abcd',
+				maxZoom: 19
+			});
+			
+			var baseMaps = {
+				"CartoDB No Labels": CartoDB_PositronNoLabels,
+				"CartoDB Dark": CartoDB_DarkMatter
+			};
+			
+			L.control.layers(baseMaps).addTo(map);
+			
+			map.addLayer(OpenStreetMap_Mapnik)
+			
+			var staresoIcon = L.icon({
+				iconUrl: 'images/stareso_icon.png',
+				iconSize:     [60, 40], // size of the icon
+				iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
+				popupAnchor:  [-10, -10] // point from which the popup should open relative to the iconAnchor
+			});
+			
+			var lighthouseIcon = L.icon({
+				iconUrl: 'images/lighthouse_icon.png',
+				iconSize:     [40, 40], // size of the icon
+				iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
+				popupAnchor:  [-10, -10] // point from which the popup should open relative to the iconAnchor
+			});
+			
+			var weatherIcon = L.icon({
+				iconUrl: 'images/weather_icon.png',
+				iconSize:     [40, 40], // size of the icon
+				iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
+				popupAnchor:  [-10, -10] // point from which the popup should open relative to the iconAnchor
+			});
+
+			var revellataMarker = L.marker([42.583005, 8.724513], {icon: lighthouseIcon});
+			revellataMarker.addTo(map);
+			revellataMarker.bindPopup(
+				'<b>Phare de la Revellata</b><div><img style="width:100%" src="http://socib.es/users/ctroupin/LeafletMaps/Stareso/images/revellata.jpg" alt="image" /></div>',
+				{minWidth : 256}
+			);
+			
+			var staresoMarker = L.marker([42.580430, 8.724207], {icon: staresoIcon});
+			staresoMarker.addTo(map);
+			staresoMarker.bindPopup(
+				'<b>STARESO</b><div><img style="width:100%" src="http://socib.es/users/ctroupin/LeafletMaps/Stareso/images/IMG_4133-IMG_4141logo.jpg" alt="image" /></div>',
+				{minWidth : 256}
+			);
+			
+			//L.marker([42.580430, 8.724207], {icon: staresoIcon}).bindPopup('STARESO').addTo(map);
+			//L.marker([42.583005, 8.724513], {icon: lighthouseIcon}).bindPopup('Phare de la Revellata').addTo(map);
+			
+			var weatherMarker = L.marker([42.578714, 8.719076], {icon: weatherIcon});
+			weatherMarker.addTo(map);
+			weatherMarker.bindPopup(
+				'<b>Dernières données:</b> <br /> <a href="http://www.gitan.ulg.ac.be/race/graphique/WindStareso.html" title="Vent"> Vent</a>',
+				{minWidth : 256}
+			);
+	
+			
+			
+		</script>
+	</body>
+</html>
+
