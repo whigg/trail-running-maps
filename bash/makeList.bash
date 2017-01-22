@@ -2,7 +2,8 @@
 
 if [ "$#" == "0" ]
   then 
-  echo 'Usage: ... inputdir outputfile movename'
+  echo 'Usage: ./makeList.bash inputdir outputfile movename'
+  stop 
   else if [ "$#" == "1" ]
   then
   inputdir=$1
