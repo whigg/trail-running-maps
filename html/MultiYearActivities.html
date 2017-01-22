@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>
+			Title to edit
+		</title>
+		<script src ="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.2/leaflet.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.2/leaflet.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.css">
+		<style type="text/css">
+			#map { height : 750px; }
+			.legend { background : white; line-height ; 2 em}
+			.legend i { width : 5em; float : left}
+		</style>
+	</head>
+	<body>
+		<div id="map"></div>
+		<!-- 
+		<script src="moves2013.js"></script>  // One json file per year containing the list of the GPX 
+		<script src="moves2014.js"></script>
+		<script src="moves2015.js"></script>
+		<script src="moves2016.js"></script>
+		-->
+		<script src="testmoves.js"></script>
+		<script src ='https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js'></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.js"></script>
+
+		<script>
+		
+		// Adapt the center and the zoom level here
+			var map = L.map('map', {
+				fullscreenControl: true,
+				}).setView([39.662,2.972], 10);
+				
+		// Add layers (see https://leaflet-extras.github.io/leaflet-providers/preview/)
+			
+			var OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 19,
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+			});
+			
+			var CartoDB_PositronNoLabels = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+				subdomains: 'abcd',
+				maxZoom: 19
+			});
+			
+			var CartoDB_DarkMatter = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+				subdomains: 'abcd',
+				maxZoom: 19
+			});
+			
+			var Stamen_Terrain = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.{ext}', {
+				attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+				subdomains: 'abcd',
+				minZoom: 0,
+				maxZoom: 18,
+				ext: 'png'
+			});
+
+			var baseMaps = {
+				"CartoDB No Labels": CartoDB_PositronNoLabels,
+				"CartoDB Dark": CartoDB_DarkMatter,
+				"OpenStreetMap": OpenStreetMap_Mapnik,
+				"Stamen_Terrain": Stamen_Terrain
+			};
+			
+			map.addLayer(Stamen_Terrain)
+			
+			// We create different properties for each year
+			// (should be done differently but not time)
+			
+			var Layer2013 = L.geoJson(null, {
+				style: function(feature) {
+					return { color: '#FF001D' , weight: 3};
+				}
+			});
+			
+			var Layer2014 = L.geoJson(null, {
+				style: function(feature) {
+					return { color: '#2AD319' , weight: 3};
+				}
+			});
+			
+			var Layer2015 = L.geoJson(null, {
+				style: function(feature) {
+					return { color: '#6622BA' , weight: 3};
+				}
+			});
+			
+			var Layer2016 = L.geoJson(null, {
+				style: function(feature) {
+					return { color: '#FFC91F' , weight: 3};
+				}
+			});
+			
+			var Layer2017 = L.geoJson(null, {
+				style: function(feature) {
+					return { color: '#00F4B1' , weight: 3};
+				}
+			});
+			
+			// We loop on the files for every year for which we have GPX
+			
+		    /*
+			var nMoves = moves2013.length;
+			var List2013 = []; 
+			for (var i = 0; i < nMoves; i++) {
+				var moveGps = omnivore.gpx(moves2013[i], null, Layer2013);
+				//moveGps.addTo(map);
+				List2013.push(moveGps);
+			}
+			
+			var nMoves = moves2014.length;
+			var List2014 = []; 
+			for (var i = 0; i < nMoves; i++) {
+				var moveGps = omnivore.gpx(moves2014[i], null, Layer2014);
+				//moveGps.addTo(map);
+				List2014.push(moveGps);
+			}
+			
+			var nMoves = moves2015.length;
+			var List2015 = []; 
+			for (var i = 0; i < nMoves; i++) {
+				var moveGps = omnivore.gpx(moves2015[i], null, Layer2015);
+				//moveGps.addTo(map);
+				List2015.push(moveGps);
+			}
+			
+			var nMoves = moves2016.length;
+			var List2016 = []; 
+			for (var i = 0; i < nMoves; i++) {
+				var moveGps = omnivore.gpx(moves2016[i], null, Layer2016);
+				//moveGps.addTo(map);
+				List2016.push(moveGps);
+			}
+			
+			*/
+			
+			var nMoves = moves.length;
+			var List2017 = []; 
+			for (var i = 0; i < nMoves; i++) {
+				var moveGps = omnivore.gpx(moves[i], null, Layer2017);
+				moveGps.addTo(map);
+				List2017.push(moveGps);
+			}
+			
+			
+			
+			var overlayers = {
+				//"2013": L.layerGroup(List2013),
+				//"2014": L.layerGroup(List2014),
+				//"2015": L.layerGroup(List2015),
+				//"2016": L.layerGroup(List2016),
+				"2017": L.layerGroup(List2017),
+			};
+
+			L.control.layers(baseMaps, overlayers).addTo(map);
+			
+
+		</script>
+		
+	</body>
+</html>
+
