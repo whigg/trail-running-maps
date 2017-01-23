@@ -18,13 +18,10 @@
 	</head>
 	<body>
 		<div id="map"></div>
+		<script src="examples/moveList.js"></script>
 		<!-- 
-		<script src="moves2013.js"></script>  // One json file per year containing the list of the GPX 
-		<script src="moves2014.js"></script>
-		<script src="moves2015.js"></script>
-		<script src="moves2016.js"></script>
+		<script src="examples/anotherMoveList.js"></script>  // One json file per year containing the list of the GPX 
 		-->
-		<script src="testmoves.js"></script>
 		<script src ='https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js'></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.js"></script>
 
@@ -71,97 +68,46 @@
 			
 			map.addLayer(Stamen_Terrain)
 			
-			// We create different properties for each year
-			// (should be done differently but not time)
 			
-			var Layer2013 = L.geoJson(null, {
-				style: function(feature) {
-					return { color: '#FF001D' , weight: 3};
-				}
-			});
+			/* Define other layer styles if necessary 
+			E.g. one per year or one for the most recent track, ...
+			*/
 			
-			var Layer2014 = L.geoJson(null, {
-				style: function(feature) {
-					return { color: '#2AD319' , weight: 3};
-				}
-			});
-			
-			var Layer2015 = L.geoJson(null, {
-				style: function(feature) {
-					return { color: '#6622BA' , weight: 3};
-				}
-			});
-			
-			var Layer2016 = L.geoJson(null, {
-				style: function(feature) {
-					return { color: '#FFC91F' , weight: 3};
-				}
-			});
-			
-			var Layer2017 = L.geoJson(null, {
+			var Layer1 = L.geoJson(null, {
 				style: function(feature) {
 					return { color: '#00F4B1' , weight: 3};
 				}
 			});
 			
-			// We loop on the files for every year for which we have GPX
-			
-		    /*
-			var nMoves = moves2013.length;
-			var List2013 = []; 
+			/* We loop on the list contained in each source file
+			(in this example, only one: examples/moveList.js).
+			The variables ("moves") is the one written in the .js file.
+			*/
+
+			var nMoves = moves.length;
+			var List = []; 
 			for (var i = 0; i < nMoves; i++) {
-				var moveGps = omnivore.gpx(moves2013[i], null, Layer2013);
-				//moveGps.addTo(map);
-				List2013.push(moveGps);
+				var moveGps = omnivore.gpx(moves[i], null, Layer1);
+				moveGps.addTo(map);
+				List.push(moveGps);
 			}
 			
-			var nMoves = moves2014.length;
-			var List2014 = []; 
-			for (var i = 0; i < nMoves; i++) {
-				var moveGps = omnivore.gpx(moves2014[i], null, Layer2014);
-				//moveGps.addTo(map);
-				List2014.push(moveGps);
-			}
-			
-			var nMoves = moves2015.length;
-			var List2015 = []; 
-			for (var i = 0; i < nMoves; i++) {
-				var moveGps = omnivore.gpx(moves2015[i], null, Layer2015);
-				//moveGps.addTo(map);
-				List2015.push(moveGps);
-			}
-			
-			var nMoves = moves2016.length;
-			var List2016 = []; 
-			for (var i = 0; i < nMoves; i++) {
-				var moveGps = omnivore.gpx(moves2016[i], null, Layer2016);
-				//moveGps.addTo(map);
-				List2016.push(moveGps);
-			}
-			
+			/* Here we create a variable 'overlayers' to allow us to
+			add or remove different layers (one per list for example) 
+			from the map.
 			*/
 			
-			var nMoves = moves.length;
-			var List2017 = []; 
-			for (var i = 0; i < nMoves; i++) {
-				var moveGps = omnivore.gpx(moves[i], null, Layer2017);
-				moveGps.addTo(map);
-				List2017.push(moveGps);
-			}
-			
-			
-			
 			var overlayers = {
-				//"2013": L.layerGroup(List2013),
-				//"2014": L.layerGroup(List2014),
-				//"2015": L.layerGroup(List2015),
-				//"2016": L.layerGroup(List2016),
-				"2017": L.layerGroup(List2017),
+				"GPX tracks": L.layerGroup(List),
 			};
 
+			/* Finally we add the control that allows us to select
+			the background layer and the GPX track layers (only one in
+			this case ; generalisation is easy).
+			*/
+			
 			L.control.layers(baseMaps, overlayers).addTo(map);
 			
-
 		</script>
 		
 	</body>
