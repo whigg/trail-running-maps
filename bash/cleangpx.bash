@@ -6,14 +6,15 @@
 # because of information stored in <extension> tags. 
 # The script use 'sed' to remove what lies within these tags.
 
+# need to add something to check if at least one file exists in $@
 
 TAG='extensions'
 for files in "$@"
-do
+do  
     outdir=$(dirname ${files})
-    outputfile=${outdir}'/'$(basename -s '.gpx' ${files})'_noext.gpx'
-    echo "cat ${files} | sed -e '/<${TAG}>/, /<\/${TAG}>/ d ' > ${outputfile}"
+    outputfile=${outdir}'/'$(basename -s '.gpx' ${files})'_no'${TAG}'.gpx'
+    echo ${files} '-->' ${outputfile}
+    cat ${files} | sed -e "/<${TAG}>/, /<\/${TAG}>/ d " > ${outputfile}
 done
-#cat config.xml-ori | sed -e '/<app-tag>/, /<\/app-tag>/ d ' > config.xml
 
 
