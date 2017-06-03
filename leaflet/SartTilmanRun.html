@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>
+			Sart Tilman B5a Running
+		</title>
+		<script src ="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.css">
+        <link rel="stylesheet" href="lib/leaflet/Leaflet.Coordinates-0.1.5.css"/>
+		<style type="text/css">
+			#map { height : 800px; }
+			.legend { text-align: left; line-height: 18px; color: #555; } 
+			.legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+		</style>
+	</head>
+	<body>
+		
+		<div id="map"></div>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/togeojson/0.16.0/togeojson.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.min.js"></script>
+        <script type="text/javascript" src="lib/leaflet/Leaflet.Coordinates-0.1.5.min.js"></script>
+   		<script src="data/movesAll.js"></script>
+   		<script src="data/movesRallye.js"></script>
+   		
+		<script>
+							
+			var map = L.map('map', {
+				fullscreenControl: true,
+				}).setView([50.57,5.57], 13);
+			
+			var OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 19,
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+			});
+			
+			var CartoDB = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+				maxZoom: 18, 
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
+			  });
+			
+			var CartoDB_DarkMatter = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+				subdomains: 'abcd',
+				maxZoom: 19
+			});
+			
+			var Stamen_Terrain = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.{ext}', {
+				attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+				subdomains: 'abcd',
+				minZoom: 0,
+				maxZoom: 18,
+				ext: 'png'
+			});
+
+			var baseMaps = {
+				"CartoDB": CartoDB,
+				"CartoDB Dark": CartoDB_DarkMatter,
+				"OpenStreetMap": OpenStreetMap_Mapnik,
+				"Stamen_Terrain": Stamen_Terrain
+			};
+			
+			map.addLayer(CartoDB)
+			
+			L.control.coordinates({
+				position:"bottomleft",
+				decimals:3,
+				decimalSeperator:".",
+				labelTemplateLat:"Lat: {y}",
+				labelTemplateLng:"Lon: {x}"
+			}).addTo(map);
+			
+			var heatStyle = {
+				gradient : {.65: "white", .75:"#FFFF36", .85:"#FF9D00", .9:"#FF1700", .95:"#900000", 1:"black"},
+				minOpacity: 0.75,
+                radius: 4,
+                blur: 4,
+			};
+			
+			latlon = [];	
+			
+			function getTrackColor(y) {
+				return y == '2013' ? '#F6FD17' :
+					   y == '2014' ? '#FDB117' :
+					   y == '2015' ? '#E457DC' :
+					   y == '2016' ? '#8EEECC' :
+					   y == '2017' ? '#6C5FBA' :
+								'grey';
+			}
+			
+			var legend = L.control({position: 'bottomright'});
+
+			legend.onAdd = function (map) {
+				var div = L.DomUtil.create('div', 'info legend'),
+					grades = [2013, 2014, 2015, 2016, 2017],
+					labels = [];
+				div.innerHTML += '<b>Year</b><br>'  
+				for (var i = 0; i < grades.length; i++) {
+					div.innerHTML +=
+						'<i style="background:' + getTrackColor(grades[i]) + '"></i> ' +
+						grades[i] + '<br>';
+				}
+
+				return div;
+			};
+			
+			legend.addTo(map);
+				
+			var customLayer = L.geoJson(null, {
+				style: function(feature) {
+					return { 
+						color: getTrackColor(feature.properties.time.substring(0, 4)), 
+						weight: 4, 
+						opacity: 1,
+						dashArray: '3,4',
+						};
+				},
+				onEachFeature: function(feature) {
+					coords = feature.geometry.coordinates;
+					for ( var i=0; i < coords.length; ++i ){ 
+						latlon.push([coords[i][1], coords[i][0]]);
+						}
+					}
+			});
+			
+			
+			var customLayerLast = L.geoJson(null, {
+				style: function(feature) {
+					return { 
+						color: getTrackColor(feature.properties.time.substring(0, 4)), 
+						weight: 5, 
+						opacity: 1
+						};
+				} 
+			});
+		
+			var nMoves = moves.length;
+			var OldTracks = []; 
+			for (var i = 0; i < nMoves; i++) {
+				var moveGps = omnivore.gpx('data/' + moves[i], null, customLayer);
+				if (i < nMoves - 1){
+					OldTracks.push(moveGps);
+				}
+			}
+			
+			var moveGps = omnivore.gpx('data/' + moves[nMoves-1], null, customLayerLast);
+			moveGps.addTo(map);	
+				
+			var heatmap = L.heatLayer(latlon, heatStyle);
+			heatlayer = L.layerGroup(heatmap);
+						
+			var overlayers = {
+				"Heat map": heatmap,
+				"Old tracks": L.layerGroup(OldTracks),
+				"Last run": moveGps
+			};
+			
+			L.control.layers(baseMaps, overlayers, {autoZIndex:false, collapsed:false}).addTo(map);	
+			
+		</script>
+		
+	</body>
+</html>
+
