@@ -26,8 +26,8 @@
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.min.js"></script>
         <script type="text/javascript" src="lib/leaflet/Leaflet.Coordinates-0.1.5.min.js"></script>
-   		<script src="data/movesAll.js"></script>
-   		<script src="data/movesRallye.js"></script>
+   		<script src="data/SartTilman/movesAll.js"></script>
+   		<script src="data/SartTilman/movesRallye.js"></script>
    		
 		<script>
 							
@@ -143,13 +143,13 @@
 			var nMoves = moves.length;
 			var OldTracks = []; 
 			for (var i = 0; i < nMoves; i++) {
-				var moveGps = omnivore.gpx('data/' + moves[i], null, customLayer);
+				var moveGps = omnivore.gpx('data/SartTilman/' + moves[i], null, customLayer);
 				if (i < nMoves - 1){
 					OldTracks.push(moveGps);
 				}
 			}
 			
-			var moveGps = omnivore.gpx('data/' + moves[nMoves-1], null, customLayerLast);
+			var moveGps = omnivore.gpx('data/SartTilman/' + moves[nMoves-1], null, customLayerLast);
 			moveGps.addTo(map);	
 				
 			var heatmap = L.heatLayer(latlon, heatStyle);
