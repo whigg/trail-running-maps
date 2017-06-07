@@ -25,6 +25,9 @@
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.min.js"></script>
+        <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+		<script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
+		<script src="https://rawgit.com/Asymmetrik/leaflet-d3/master/dist/leaflet-d3.js" charset="utf-8"></script>
         <script type="text/javascript" src="lib/leaflet/Leaflet.Coordinates-0.1.5.min.js"></script>
    		<script src="data/GranCanaria/movesAll.js"></script>
    		
@@ -32,7 +35,7 @@
 							
 			var map = L.map('map', {
 				fullscreenControl: true,
-				}).setView([28.,-15.6], 10);
+				}).setView([27.965,-15.577], 11);
 			
 			var OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				maxZoom: 19,
@@ -82,7 +85,8 @@
                 blur: 4,
 			};
 			
-			latlon = [];	
+			latlon = [];
+			lonlat = [];	
 			
 			function getTrackColor(y) {
 				return y == '2013' ? '#F6FD17' :
@@ -124,6 +128,7 @@
 					coords = feature.geometry.coordinates;
 					for ( var i=0; i < coords.length; ++i ){ 
 						latlon.push([coords[i][1], coords[i][0]]);
+						lonlat.push([coords[i][0], coords[i][1]]);
 						}
 					}
 			});
@@ -142,7 +147,7 @@
 			var nMoves = moves.length;
 			var OldTracks = []; 
 			for (var i = 0; i < nMoves; i++) {
-				console.log('data/' + moves[i])
+				//console.log('data/' + moves[i])
 				var moveGps = omnivore.gpx('data/GranCanaria/' + moves[i], null, customLayer);
 				if (i < nMoves - 1){
 					OldTracks.push(moveGps);
@@ -155,8 +160,23 @@
 			var heatmap = L.heatLayer(latlon, heatStyle);
 			heatlayer = L.layerGroup(heatmap);
 						
+			var hexoptions = {
+				radius : 13,
+				opacity: 0.5,
+				duration: 200,
+				colorScaleExtent: [ 1, 1000 ],
+				radiusScaleExtent: [ 1, undefined ],
+				colorRange: [ '#FAFF69', '#F43C1D' ],
+				colorValue: function(d) { return Math.log(d.length); },
+				radiusRange: [ 5, 12 ],
+			};
+
+			var hexLayer = L.hexbinLayer(hexoptions);
+			hexLayer.data(lonlat);
+						
 			var overlayers = {
 				"Heat map": heatmap,
+				"Hexbin": hexLayer,
 				"Old tracks": L.layerGroup(OldTracks),
 				"Last run": moveGps
 			};

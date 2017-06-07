@@ -143,18 +143,18 @@
 			var heatmap = L.heatLayer(latlon, heatStyle);
 			heatlayer = L.layerGroup(heatmap);
 			
-			var options = {
+			var hexoptions = {
 				radius : 13,
 				opacity: 0.5,
-				duration: 500,
-				colorScaleExtent: [ 1, 500 ],
+				duration: 200,
+				colorScaleExtent: [ 1, 400 ],
 				radiusScaleExtent: [ 1, undefined ],
 				colorRange: [ '#FAFF69', '#F43C1D' ],
-				colorValue: function(d) { return Math.sqrt(d.length); },
+				colorValue: function(d) { return Math.log(d.length); },
 				radiusRange: [ 5, 12 ],
 			};
 
-			var hexLayer = L.hexbinLayer(options).addTo(map);
+			var hexLayer = L.hexbinLayer(hexoptions);
 			hexLayer.data(lonlat);
 						
 			var overlayers = {
