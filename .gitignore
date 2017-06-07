@@ -1,4 +1,5 @@
-data/
+*gpx
+data
 notebooks/html/
 notebooks/.ipynb_checkpoints/
 notebooks/*.txt
