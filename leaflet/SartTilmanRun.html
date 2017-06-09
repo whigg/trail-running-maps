@@ -42,7 +42,8 @@
 			<script src="data/SartTilman/movesRallye.js"></script>
 			
 			<script>
-								
+				
+				var gpxdir = 'data/SartTilman/'
 				var map = L.map('map', {
 					fullscreenControl: true,
 					}).setView([50.58,5.57], 13);
@@ -197,14 +198,14 @@
 				var nMoves = moves.length;
 				var OldTracks = []; 
 				for (var i = 0; i < nMoves -1; i++) {
-					var moveGps = omnivore.gpx('data/SartTilman/' + moves[i], null, customLayer);
+					var moveGps = omnivore.gpx(gpxdir + moves[i], null, customLayer);
 					moveGps.addTo(map);
 					if (i < nMoves - 1){
 						OldTracks.push(moveGps);
 					}
 				}
 				
-				var moveGps = omnivore.gpx('data/SartTilman/' + moves[nMoves-1], null, customLayerLast);
+				var moveGps = omnivore.gpx(gpxdir + moves[nMoves-1], null, customLayerLast);
 				moveGps.addTo(map);
 				moveGps.bringToFront();
 				
