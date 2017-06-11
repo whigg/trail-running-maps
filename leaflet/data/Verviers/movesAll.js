@@ -28,4 +28,5 @@ var moves = [
 	"Jehanster_Move_2017_06_05_09_53_57_Trekking_noextensions.gpx",
 	"Jehanster_10xCotes_2017_06_09_18_33_07_Running_noextensions.gpx",
 	"Jehanster_Move_2017_06_11_10_43_59_Trekking_noextensions.gpx",
+	"Jehanster_Oneux_2017_06_11_17_26_54_Running_noextensions.gpx",
 ]
