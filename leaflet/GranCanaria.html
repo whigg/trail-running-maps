@@ -13,8 +13,14 @@
         <link rel="stylesheet" href="lib/leaflet/Leaflet.Coordinates-0.1.5.css"/>
 		<style type="text/css">
 			#map { height : 800px; }
+			.info { padding: 10px 20px; font: 20px/22px Arial, Helvetica, sans-serif; background: rgba(255,255,255,0.7); 
+					box-shadow: 0 0 15px rgba(0,0,0,0.4); border-radius: 7px; } 
+						.info h4 { margin: 0 0 5px; color: #777; }
 			.legend { text-align: left; line-height: 18px; color: #555; } 
 			.legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+			.hexbin-hexagon {
+					stroke: #000;
+					stroke-width: .5px;
 		</style>
 	</head>
 	<body>
@@ -29,7 +35,7 @@
 		<script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
 		<script src="https://rawgit.com/Asymmetrik/leaflet-d3/master/dist/leaflet-d3.js" charset="utf-8"></script>
         <script type="text/javascript" src="lib/leaflet/Leaflet.Coordinates-0.1.5.min.js"></script>
-   		<script src="data/GranCanaria/movesAll.js"></script>
+   		<script src="data/GranCanaria/movesShort.js"></script>
    		
 		<script>
 							
@@ -85,6 +91,23 @@
                 blur: 4,
 			};
 			
+			// control that shows state info on hover
+			var info = L.control({position: 'bottomright'});
+
+			info.onAdd = function (map) {
+				this._div = L.DomUtil.create('div', 'info');
+				this.update();
+				return this._div;
+			};
+
+			info.update = function (props) {
+				this._div.innerHTML = (props ?
+					'<b>' + props.name + '</b><br />' + props.time.substring(0, 10)
+					: 'Hover over <br> a track');
+			};
+
+			info.addTo(map);
+			
 			latlon = [];
 			lonlat = [];	
 			
@@ -114,7 +137,58 @@
 			};
 			
 			legend.addTo(map);
+			
+			function highlightFeature(e) {
+					var layer = e.target;
+					
+					layer.setStyle({
+						weight: 5,
+					});
+					if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+						layer.bringToFront();
+					}
+
+					info.update(layer.feature.properties);
+				}
 				
+			function resetHighlight(e) {
+				var layer = e.target;
+			
+				layer.setStyle({
+					weight: 2,
+				});
+				
+				info.update();
+			}
+			
+			function zoomToFeature(e) {
+				map.fitBounds(e.target.getBounds());
+			}
+					
+			var onEachFeature = function (feature, layer) {
+				layer.on({
+					mouseover: highlightFeature,
+					mouseout: resetHighlight,
+					click: zoomToFeature
+				});
+				coords = feature.geometry.coordinates;
+				for ( var i=0; i < coords.length; ++i ){
+					latlon.push([coords[i][1], coords[i][0]]);
+					lonlat.push([coords[i][0], coords[i][1]]);
+					}
+			};
+			
+			var customLayer = L.geoJson(null, {
+				style: function(feature) {
+					return { 
+						color: getTrackColor(feature.properties.time.substring(0, 4)), 
+						weight: 3, 
+						opacity: 1,
+						};
+				},
+				onEachFeature: onEachFeature
+			});
+			/*
 			var customLayer = L.geoJson(null, {
 				style: function(feature) {
 					return { 
@@ -124,15 +198,9 @@
 						dashArray: '3,4',
 						};
 				},
-				onEachFeature: function(feature) {
-					coords = feature.geometry.coordinates;
-					for ( var i=0; i < coords.length; ++i ){ 
-						latlon.push([coords[i][1], coords[i][0]]);
-						lonlat.push([coords[i][0], coords[i][1]]);
-						}
-					}
+				onEachFeature: onEachFeature
 			});
-			
+			*/
 			
 			var customLayerLast = L.geoJson(null, {
 				style: function(feature) {
