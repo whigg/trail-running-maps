@@ -218,16 +218,16 @@
 				var customLayerLast = L.geoJson(null, {
 					style: function(feature) {
 						return { 
-							color: 'black', 
-							weight: 5, 
-							opacity: 1
+							color: 'yellow', 
+							weight: 20, 
+							opacity: .55
 							};
 					} 
 				});
 			
 				var nMoves = moves.length;
 				var OldTracks = []; 
-				for (var i = 0; i < nMoves -1; i++) {
+				for (var i = 0; i < nMoves ; i++) {
 					var moveGps = omnivore.gpx(gpxdir + moves[i], null, customLayer);
 					moveGps.addTo(map);
 					if (i < nMoves - 1){
