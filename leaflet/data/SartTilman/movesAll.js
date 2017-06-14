@@ -17,4 +17,5 @@ var moves = [
 	"2017/SartTilman_Move_2017_05_30_12_10_18_Running_noextensions.gpx",
 	"2017/SartTilman_Piste_2017_06_06_12_09_25_Running_noextensions.gpx",
 	"2017/SartTilman_PointdeVue_2017_06_08_12_05_01_Running_noextensions.gpx",
+	"2017/SartTilman_Piste_2017_06_13_12_13_29_Running_noextensions.gpx"
 ]
