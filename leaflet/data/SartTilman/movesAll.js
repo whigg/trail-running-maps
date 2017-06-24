@@ -17,5 +17,8 @@ var moves = [
 	"2017/SartTilman_Move_2017_05_30_12_10_18_Running_noextensions.gpx",
 	"2017/SartTilman_Piste_2017_06_06_12_09_25_Running_noextensions.gpx",
 	"2017/SartTilman_PointdeVue_2017_06_08_12_05_01_Running_noextensions.gpx",
-	"2017/SartTilman_Piste_2017_06_13_12_13_29_Running_noextensions.gpx"
+	"2017/SartTilman_Piste_2017_06_13_12_13_29_Running_noextensions.gpx",
+	"2017/SartTilman_Golf_Move_2017_06_20_12_08_29_Running_noextensions.gpx",
+	"2017/SartTilman_BlancGravier_Move_2017_06_22_12_06_40_Multisport_noextensions.gpx",
+	"2017/Guillemins_SartTilman_2017_06_23_07_27_48_Running_noextensions.gpx"
 ]

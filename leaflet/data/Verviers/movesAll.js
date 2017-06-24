@@ -29,4 +29,8 @@ var moves = [
 	"Jehanster_10xCotes_2017_06_09_18_33_07_Running_noextensions.gpx",
 	"Jehanster_Move_2017_06_11_10_43_59_Trekking_noextensions.gpx",
 	"Jehanster_Oneux_2017_06_11_17_26_54_Running_noextensions.gpx",
+	"GareVerviers_Jehanster_2017_06_14_17_26_49_Running_noextensions.gpx",
+	"JoggVerviers_2017_06_18_15_00_34_Running.gpx",
+	"JoggVerviersRecuup_2017_06_18_15_57_30_Running.gpx",
+	"Jehanster_ParcoursVita_2017_06_21_18_20_07_Running_noextensions.gpx",
 ]
