@@ -196,10 +196,18 @@
 						click: zoomToFeature
 					});
 					coords = feature.geometry.coordinates;
+					latmean = 0
+					lonmean = 0
 					for ( var i=0; i < coords.length; ++i ){
+						latmean += coords[i][1]
+						lonmean += coords[i][0]
 						latlon.push([coords[i][1], coords[i][0]]);
 						lonlat.push([coords[i][0], coords[i][1]]);
 						}
+					latmean = latmean / coords.length
+					lonmean = lonmean / coords.length
+					console.log('Mean latitude:' + latmean);
+					L.circleMarker([latmean, lonmean], {radius: 5, color: 'red'}).addTo(map);
 				};
 			
 					
@@ -255,12 +263,24 @@
 
 				var hexLayer = L.hexbinLayer(hexoptions);
 				hexLayer.data(lonlat);
-									
+				
+				
+				var startpoint = [50.582, 5.566];
+				var distCircles = []
+				for(count = 1; count < 5; count++){
+					dCircle = L.circle(startpoint, count * 1000., 
+					{color: "#A7A7A7", fillColor: "None", dashArray: '20,15'});
+					dCircle.addTo(map);
+					distCircles.push(dCircle);
+				}
+				circleLayer = L.layerGroup(distCircles);
+				
 				var overlayers = {
 					"Heat map": heatmap,
 					"Hexbin": hexLayer,
 					"Old tracks": L.layerGroup(OldTracks),
-					"Last run": moveGps
+					"Last run": moveGps,
+					"Distance circles": circleLayer
 				};
 				
 				L.control.layers(baseMaps, overlayers, {autoZIndex:true, collapsed:false}).addTo(map);	
