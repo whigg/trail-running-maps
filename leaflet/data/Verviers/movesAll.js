@@ -33,4 +33,5 @@ var moves = [
 	"JoggVerviers_2017_06_18_15_00_34_Running.gpx",
 	"JoggVerviersRecuup_2017_06_18_15_57_30_Running.gpx",
 	"Jehanster_ParcoursVita_2017_06_21_18_20_07_Running_noextensions.gpx",
+	"Jehanster_Hevremont_2017_06_25_18_44_03_Running_noextensions.gpx"
 ]
