@@ -18,10 +18,9 @@ def read_gpx_lonlat(filename):
                 lat.append(float(match.group(1)))
                 lon.append(float(match.group(2)))
             else:
-				matchele = re.search("<ele>([-0-9\.]+)</ele>", lines)
-				if matchele:
-					elevation.append(float(matchele.group(1)))
-               
-				
+                matchele = re.search("<ele>([-0-9\.]+)</ele>", lines)
+                if matchele:
+                    elevation.append(float(matchele.group(1)))
+              
     return lon, lat, elevation
    
