@@ -35,5 +35,13 @@ var moves = [
 	"Jehanster_ParcoursVita_2017_06_21_18_20_07_Running_noextensions.gpx",
 	"Jehanster_Hevremont_2017_06_25_18_44_03_Running_noextensions.gpx",
 	"Jogging_Cornesse_2017_07_07_19_23_49_Running_noextensions.gpx",
-	"Jehanster_Stembert_Heusy_2017_07_02_10_56_48_Running_noextensions.gpx"
+	"Jehanster_Stembert_Heusy_2017_07_02_10_56_48_Running_noextensions.gpx",
+	"PetitRechain_Soiron_2017_07_15_08_39_49_Running_noextensions.gpx",
+	"Verviers_Heusy_2017_07_17_18_29_50_Running_noextensions.gpx",
+	"Jehanster_CimetiereStembert_2017_07_28_18_04_01_Running_noextensions.gpx",
+	"Jehanster-Ensival_2017_07_30_08_46_27_Running_noextensions.gpx",
+	"Jehanster-Heusy_2017_08_01_11_40_58_Running_noextensions.gpx",
+	"Jehanster-Polleur-Oneux_2017_08_06_10_09_33_Running_noextensions.gpx",
+	"Jehanster_Mangombroux_2017_08_13_11_14_52_Running_noextensions.gpx",
+	"extratrail_jalhay_2017_08_15_07_01_37_Trail+running_noextensions.gpx",
 ]
