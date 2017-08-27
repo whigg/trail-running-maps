@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+	<head>
+			<meta charset="UTF-8"/>
+			
+			<meta name="viewport" content="width=device-width, initial-scale=1" />
+			<title>
+				Running and biking in Mallorca
+			</title>
+			<script src ="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.css">
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+			<link rel="stylesheet" href="lib/leaflet/Leaflet.Coordinates-0.1.5.css"/>
+			<style type="text/css">
+				#map { height : 800px; }
+				.info { padding: 10px 20px; font: 20px/22px Arial, Helvetica, sans-serif; background: rgba(255,255,255,0.7); 
+					box-shadow: 0 0 15px rgba(0,0,0,0.4); border-radius: 7px; } 
+						.info h4 { margin: 0 0 5px; color: #777; }
+				.legend { text-align: left; line-height: 18px; color: #555; } 
+				.legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+				.hexbin-hexagon {
+					stroke: #000;
+					stroke-width: .5px;
+				}
+				
+			</style>
+		</head>
+	<body>
+		
+		<div id="map"></div>
+		<script src="data/Mallorca/hikeList.js"></script>
+		<script src="data/Mallorca/bikeList.js"></script>
+		<script src="data/Mallorca/trailList.js"></script>
+		<script src="data/Mallorca/runList.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/togeojson/0.16.0/togeojson.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.min.js"></script>
+		<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+		<script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
+		<script src="https://rawgit.com/Asymmetrik/leaflet-d3/master/dist/leaflet-d3.js" charset="utf-8"></script>
+		<script type="text/javascript" src="lib/leaflet/Leaflet.Coordinates-0.1.5.min.js"></script>
+
+		<script>
+							
+			var map = L.map('map', {fullscreenControl: true}).setView([39.57, 2.986239], 10);
+			
+			
+			var OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 19,
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+			});
+			
+			var CartoDB = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+					maxZoom: 18, 
+					attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
+				  });
+			
+			var CartoDB_DarkMatter = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+				subdomains: 'abcd',
+				maxZoom: 19
+			});
+			
+			var Stamen_Terrain = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.{ext}', {
+				attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+				subdomains: 'abcd',
+				minZoom: 0,
+				maxZoom: 18,
+				ext: 'png'
+			});
+			
+			var Esri_DarkGreyCanvas = L.tileLayer(
+				"http://{s}.sm.mapstack.stamen.com/" +
+				"(toner-lite,$fff[difference],$fff[@23],$fff[hsl-saturation@20])/" +
+				"{z}/{x}/{y}.png",
+				{
+					attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, ' +
+					'NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+				}
+			);
+
+			var baseMaps = {
+				"CartoDB": CartoDB,
+				"CartoDB Dark": CartoDB_DarkMatter,
+				"OpenStreetMap": OpenStreetMap_Mapnik,
+				"Stamen Terrain": Stamen_Terrain,
+				"Grey Canvas": Esri_DarkGreyCanvas
+			};
+			
+			map.addLayer(Stamen_Terrain)
+			
+			function getActivityColor(sport) {
+				return sport == 'Run' ? '#FDB117' :
+					   sport == 'Trail' ? '#F6FD17' :
+					   sport == 'Hike' ? '#E64646' :
+					   sport == 'Bike' ? '#2A229B' :
+					  '#61BA5F';
+			}
+			
+			
+			var heatStyleBike = {
+				gradient : {.65: "white", .95:getActivityColor('Bike'), 1:"black"},
+				minOpacity: 0.75,
+                radius: 4,
+                blur: 4,
+			};
+			
+			var heatStyleTrail = {
+				gradient : {.65: "white", .95:getActivityColor('Trail'), 1:"black"},
+				minOpacity: 0.75,
+                radius: 4,
+                blur: 4,
+			};
+			
+			var heatStyleHike = {
+				gradient : {.65: "white", .95:getActivityColor('Hike'), 1:"black"},
+				minOpacity: 0.75,
+                radius: 4,
+                blur: 4,
+			};
+			
+			var heatStyleRun = {
+				gradient : {.65: "white", .95:getActivityColor('Run'), 1:"black"},
+				minOpacity: 0.75,
+                radius: 4,
+                blur: 4,
+			};
+			
+			var haversineDistance = function (lon1, lat1, lon2, lat2) {
+				var toRad = function (x) {
+					return x * Math.PI / 180;
+				};
+				var R = 6371; // km
+				var x1 = lat2 - lat1;
+				var dLat = toRad(x1);
+				var x2 = lon2 - lon1;
+				var dLon = toRad(x2)
+				var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+				Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+				Math.sin(dLon / 2) * Math.sin(dLon / 2);
+				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+				var d = R * c;
+
+				return d;
+			}
+			
+			var computeTrackLength = function (layer){
+				latlonalt = layer._latlngs;
+				var gpxLength = 0;
+				for ( var i=0; i < latlonalt.length-1; ++i ){
+					gpxLength += haversineDistance(latlonalt[i].lng, latlonalt[i].lat, 
+					latlonalt[i+1].lng, latlonalt[i+1].lat)
+				}
+				//console.log("Distance = " + cumDist.toFixed(3));
+				return gpxLength;
+				
+			};
+			
+			var computeElevationGain = function (layer){
+				latlonalt = layer._latlngs;
+				var dplus = 0.
+				var dminus = 0.
+				for ( var i=0; i < latlonalt.length-1; ++i ){
+					delta = latlonalt[i+1].alt - latlonalt[i].alt
+					if (delta > 0 ){
+						dplus += delta;
+					}
+					else {
+						dminus += Math.abs(delta);
+					}
+				}
+				return [dplus, dminus];
+				
+			};
+			
+			// control that shows state info on hover
+			var info = L.control({position: 'bottomleft'});
+
+			info.onAdd = function (map) {
+				this._div = L.DomUtil.create('div', 'info');
+				this.update();
+				return this._div;
+			};
+
+
+			var iconsport = function(sport) {
+				if ( sport === "Hike" ) {
+					icon = '<img src="images/backpacker.png" alt="Hiking" style="height:24px;"> '
+				} else if ( sport === "Bike" ) {
+					icon = '<i class="fa fa-bicycle" aria-hidden="true"></i> '
+				} else if ( sport === "Run" ) {
+					icon = '<img src="images/runner-.png" alt="Running" style="height:24px;"> '
+				} else if ( sport === "Trail" ) {
+					icon = '<img src="images/mountain-running-silhouette.png" alt="Trail-running" style="height:24px;"> '
+				} else {
+					icon = '<i class="fa fa-question-circle-o" aria-hidden="true"></i>'
+				}
+				
+				return icon;
+				
+			};
+
+			info.update = function (props, d, dp, dm) {
+				this._div.innerHTML = (props ?
+					'<b>' + props.name + '</b><br/> <i class="fa fa-calendar" aria-hidden="true"></i> ' + props.time.substring(0, 10) + 
+					'&emsp;' + iconsport(props.keywords) + d.toFixed(2) + ' km' + 
+					'<br/> <b><i class="fa fa-arrow-circle-up" aria-hidden="true"></i></b> ' + dp.toFixed(1) + ' m' + 
+					'&emsp; <b><i class="fa fa-arrow-circle-down" aria-hidden="true"></i></b> ' + dm.toFixed(1) + ' m' 
+					: 'Hover over a track' +
+					'<br/> <i class="fa fa-calendar" aria-hidden="true"></i>' + '&emsp; <i class="fa fa-question-circle-o" aria-hidden="true"></i>' + 
+					'<br/> <b><i class="fa fa-arrow-circle-up" aria-hidden="true"></i></b> '  + 
+					'&emsp; <b><i class="fa fa-arrow-circle-down" aria-hidden="true"></i></b> ' 
+					);
+				
+			};
+			
+			info.addTo(map);
+			
+			function highlightFeature(e) {
+					var layer = e.target;
+					trackLength = computeTrackLength(layer);	
+					elevation = computeElevationGain(layer);
+					dplus = elevation[0];
+					dminus = elevation[1];				
+					layer.setStyle({
+						weight: 5,
+					});
+					if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+						layer.bringToFront();
+					}
+
+					info.update(layer.feature.properties, trackLength, dplus, dminus);
+				}
+				
+			function resetHighlight(e) {
+				var layer = e.target;
+			
+				layer.setStyle({
+					weight: 2,
+				});
+				
+				info.update();
+			}
+			
+			function zoomToFeature(e) {
+				map.fitBounds(e.target.getBounds());
+			}
+
+			
+			var latlonDict = {};
+			latlonDict["Hike"] = []
+			latlonDict["Bike"] = []
+			latlonDict["Trail"] = []
+			latlonDict["Run"] = []
+			var lonlatDict = {};
+			lonlatDict["Hike"] = []
+			lonlatDict["Bike"] = []
+			lonlatDict["Trail"] = []
+			lonlatDict["Run"] = []
+			
+	
+			var sportLayer = L.geoJson(null, {
+				style: function(feature) {
+					return { color: getActivityColor(feature.properties.keywords), weight: 3};
+				},
+				onEachFeature: function(feature, layer) {
+					layer.on({
+						mouseover: highlightFeature,
+						mouseout: resetHighlight,
+						click: zoomToFeature
+					});
+					var trackname = feature.properties.name;
+					var type = feature.properties.keywords;
+					console.log(trackname);
+					console.log("Sport: "+ type);
+					coords = feature.geometry.coordinates;
+					for ( var i=0; i < coords.length; ++i ){ 
+						latlonDict[type].push([coords[i][1], coords[i][0]]);
+						lonlatDict[type].push([coords[i][0], coords[i][1]]);
+						}		
+				}
+			});
+	
+
+			var sportlist = [hike, bike, run, trail]
+	
+			var nsports = sportlist.length;
+			for (var i = 0; i < nsports; i++) {
+				var nMoves = sportlist[i].length;
+				for (var j = 0; j < nMoves; j++) {
+					var moveGps = omnivore.gpx('data/Mallorca/' + sportlist[i][j], null, sportLayer);
+					//console.log(moveGps);
+					//console.log(sportlist[i][j]);
+				}
+				
+			}
+			moveGps.addTo(map);
+			
+			var hexoptionsHike = {
+					radius : 8,
+					opacity: 0.5,
+					duration: 200,
+					colorScaleExtent: [ 1, 350 ],
+					radiusScaleExtent: [ 1, undefined ],
+					colorRange: [ '#FFFFFF', getActivityColor("Hike") ],
+					colorValue: function(d) { return Math.sqrt(d.length); },
+					radiusRange: [ 3, 8 ],
+			};
+			
+			// Only modify the color for the other hexbin styles
+			var hexoptionsBike = jQuery.extend(true, {}, hexoptionsHike);
+			hexoptionsBike["colorRange"] = [ '#FFFFFF', getActivityColor("Bike")];
+			
+			var hexoptionsTrail = jQuery.extend(true, {}, hexoptionsHike);
+			hexoptionsTrail["colorRange"] = [ '#FFFFFF', getActivityColor("Trail")];
+			
+			var hexoptionsRun = jQuery.extend(true, {}, hexoptionsHike);
+			hexoptionsRun["colorRange"] = [ '#FFFFFF', getActivityColor("Run")];
+	
+	
+			var hexLayerHike = L.hexbinLayer(hexoptionsHike);
+			hexLayerHike.data(lonlatDict["Hike"]);
+			var hexLayerBike = L.hexbinLayer(hexoptionsBike);
+			hexLayerBike.data(lonlatDict["Bike"]);
+			var hexLayerTrail = L.hexbinLayer(hexoptionsTrail);
+			hexLayerTrail.data(lonlatDict["Trail"]);
+			var hexLayerRun = L.hexbinLayer(hexoptionsRun);
+			hexLayerRun.data(lonlatDict["Run"]);
+			
+			hexlayer = L.layerGroup([hexLayerHike, hexLayerBike, hexLayerTrail, hexLayerRun]);
+			
+			var heatmap1 = L.heatLayer(latlonDict["Hike"], heatStyleHike);
+			var heatmap2 = L.heatLayer(latlonDict["Bike"], heatStyleBike);
+			var heatmap3 = L.heatLayer(latlonDict["Trail"], heatStyleTrail);
+			var heatmap4 = L.heatLayer(latlonDict["Run"], heatStyleRun);
+			heatlayer = L.layerGroup([heatmap1, heatmap2, heatmap3, heatmap4]);
+			
+			var overlayers = {
+				"Tracks ": moveGps,
+				"Heat map": heatlayer,
+				"Hexbin map": hexlayer,
+			};
+			
+			
+			
+			var legend = L.control({position: 'bottomright'});
+			
+			legend.onAdd = function (map) {
+				var div = L.DomUtil.create('div', 'info legend'),
+					grades = ['Hike', 'Run', 'Trail', 'Bike'],
+					labels = [];
+				div.innerHTML += '<b>Activity</b><br>'  
+				for (var i = 0; i < grades.length; i++) {
+					div.innerHTML +=
+						'<i style="background:' + getActivityColor(grades[i]) + '"></i> ' +
+						grades[i] + '<br>';
+				}
+
+				return div;
+			};
+			
+			legend.addTo(map);
+			L.control.scale().addTo(map);
+
+			L.control.layers(baseMaps, overlayers, {autoZIndex:true, collapsed:false}).addTo(map);
+			
+											
+			
+		</script>
+		<div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+	</body>
+</html>
+
