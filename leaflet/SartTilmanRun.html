@@ -237,6 +237,7 @@
 				var OldTracks = []; 
 				for (var i = 0; i < nMoves ; i++) {
 					var moveGps = omnivore.gpx(gpxdir + moves[i], null, customLayer);
+					console.log(moveGps);
 					moveGps.addTo(map);
 					if (i < nMoves - 1){
 						OldTracks.push(moveGps);
