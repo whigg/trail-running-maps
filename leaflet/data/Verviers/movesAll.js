@@ -44,4 +44,7 @@ var moves = [
 	"Jehanster-Polleur-Oneux_2017_08_06_10_09_33_Running_noextensions.gpx",
 	"Jehanster_Mangombroux_2017_08_13_11_14_52_Running_noextensions.gpx",
 	"extratrail_jalhay_2017_08_15_07_01_37_Trail+running_noextensions.gpx",
+	"VerviersGare_PetitRechain_2017_08_21_17_22_47_Running_noextensions.gpx",
+	"LaRedoutable_2017_08_26_16_09_27_Trail+running_noextensions.gpx",
+	"Jehanster_Louveterie_2017_08_28_17_37_54_Running_noextensions.gpx",
 ]
