@@ -4,3 +4,4 @@ notebooks/.ipynb_checkpoints/
 notebooks/*.txt
 text*
 *pyc
+leaflet/js
