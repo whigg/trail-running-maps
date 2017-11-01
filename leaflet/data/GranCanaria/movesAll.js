@@ -97,5 +97,14 @@ var moves = [
 	"2017/valleseco-madrelagua-monagas.gpx",
 	"2017/LosChorros-Valleseco_2017_01_09_17_26_12_Running_noextensions.gpx",
 	"2017/gran-canaria-transgrancanaria-2017.gpx",
-	"2017/Valleseco_TalayonArinez_Move_2017_01_01_19_34_19_Running.gpx"
+	"2017/Valleseco_TalayonArinez_Move_2017_01_01_19_34_19_Running.gpx",
+	"2017/Valleseco_Teror_2017_09_18_08_23_05_Trekking_noextensions.gpx",
+	"2017/Valleseco-LomoRosas_2017_09_10_10_05_09_Trail+running_noextensions.gpx",
+	"2017/Valleseco_LaCulata_2017_09_14_19_19_15_Running_noextensions.gpx",
+	"2017/Valleseco_Cuevecillas_2017_09_20_08_30_09_Trekking_noextensions.gpx",
+	"2017/Valleseco_Cuevecillas_2017_09_17_18_56_10_Running_noextensions.gpx",
+	"2017/Valleseco_BarrancoVirgen_Monagas_2017_09_09_16_22_20_Running_noextensions.gpx",
+	"2017/Teror_Osorio_Valleseco_2017_09_18_11_10_49_Running_noextensions.gpx",
+	"2017/SanMateo_MiradorCruz_2017_09_09_10_51_46_Trekking_noextensions.gpx",
+	"2017/Valleseco_Valdensero_2017_09_20_18_28_48_Running_noextensions.gpx",
 	]
