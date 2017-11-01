@@ -31,6 +31,11 @@ case $# in
 esac
 
 echo "var" ${movename} "= [" > ${outputfile}
-find ${inputdir} -maxdepth 1 -type f -name '*gpx' -printf '"%p",\n' >> ${outputfile}
+#find ${inputdir} -maxdepth 1 -type f -name '*gpx' -printf '"%p",\n' >> ${outputfile}
+
+for f in $(ls -tr ${inputdir}/*.gpx); do
+  printf "'$(basename ${f})',\n" >> ${outputfile}
+done
+
 echo "]" >> ${outputfile}
 

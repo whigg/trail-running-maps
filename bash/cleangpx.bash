@@ -4,7 +4,7 @@
 #
 # The GPX downloaded from Garmin or Movescount are often much bigger than necessary
 # because of information stored in <extension> tags. 
-# The script use 'sed' to remove what lies within these tags.
+# The script uses 'sed' to remove what lies within these tags.
 
 # need to add something to check if at least one file exists in $@
 
