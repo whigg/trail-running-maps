@@ -18,10 +18,10 @@ fi
 
 for files in "$@"
 do  
-    outdir=$(dirname ${files})
-    outputfile=${outdir}'/'$(basename -s '.gpx' ${files})'_no'${TAG}'.gpx'
-    echo ${files} '-->' ${outputfile}
-    cat ${files} | sed -e "/<${TAG}>/, /<\/${TAG}>/ d " > ${outputfile}
+    sed -i 's/<\/trkpt>/\n<\/trkpt>/' ${files}
+    sed -i 's/<\/gpx>/\n<\/gpx>/' ${files}
+    sed -i -e "/<${TAG}>/, /<\/${TAG}>/ d " ${files}
+    sed -i 's/<link ><\/link>//' ${files}
 done
 
 

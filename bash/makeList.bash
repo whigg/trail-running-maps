@@ -2,9 +2,9 @@
 
 # Create list in json from files inside a given directory
 # ctroupin 2017
-# 
+#
 
-case $# in 
+case $# in
 0)
     echo "Usage: ${0} inputdir outputfile movename"
     exit 1
@@ -33,9 +33,8 @@ esac
 echo "var" ${movename} "= [" > ${outputfile}
 #find ${inputdir} -maxdepth 1 -type f -name '*gpx' -printf '"%p",\n' >> ${outputfile}
 
-for f in $(ls -tr ${inputdir}/*.gpx); do
-  printf "'$(basename ${f})',\n" >> ${outputfile}
+for f in $(ls -trd ${inputdir}/*.gpx); do
+  printf "\t'${f}',\n" >> ${outputfile}
 done
 
 echo "]" >> ${outputfile}
-
