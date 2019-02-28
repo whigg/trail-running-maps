@@ -136,6 +136,22 @@ var moves = [
 	"2018/JuncalilloSur_2018_01_11_11_17_06_Trekking_noextensions.gpx",
 	"2018/Inagua_2018_01_12_11_21_41_Trekking_noextensions.gpx",
 	"2018/TunteTrail_2018_01_13_09_02_11_Running_noextensions.gpx",
-
-
-];
+	"2018/CruzTejeda_2018_06_13_18_18_54_Running_noextensions.gpx",
+	"2018/Cuevecillas_2018_06_11_19_42_22_Running_noextensions.gpx",
+	"2018/SanIsidro_Teror_2018_06_10_11_23_47_Running_noextensions.gpx",
+	"2018/Valleseco_Monagas_2018_06_14_07_25_37_Running_noextensions.gpx",
+	"2018/ArtenaraTrail_2018_06_16_09_00_09_Running_noextensions.gpx",
+	"2018/Valleseco_Valsendero_2018_06_19_18_14_51_Running_noextensions.gpx",
+	"2018/Valleseco_Teror_Orosio_2018_06_21_17_58_21_Running_noextensions.gpx",
+	"2018/Valleseco_Arbejales_Teror_2018_06_25_16_09_16_Running_noextensions.gpx",
+	"2018/TrailGaldar_2018_06_30_17_06_07_Running_noextensions.gpx",
+	"2018/Tejeda_Culata_2018_07_03_16_15_43_Running_edited_noextensions.gpx",
+	"2018/Tamaraceite_LosGiles_2018_07_02_16_51_32_Running_noextensions.gpx",
+	"2018/PicoOsorio_2018_06_26_19_48_24_Running_noextensions.gpx",
+	"2018/OjoCocodrilo_2018_06_28_07_38_54_Trekking_noextensions.gpx",
+	"2018/Lagunetas_BarrancoMina_2018_07_05_10_17_56_Running_noextensions.gpx",
+	"2018/Cuevecillas_2018_06_23_19_45_27_Running_noextensions.gpx",
+	"2018/CruzTejeda_Galas_2018_06_24_18_37_42_Running_noextensions.gpx",
+	"2018/Chorros_Valleseco_2018_06_29_19_04_09_Running_noextensions.gpx",
+	"2018/Valleseco_ElPrado_2018_07_06_19_03_07_Running_noextensions.gpx",
+	];
