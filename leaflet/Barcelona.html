@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>
+			Running around Verviers
+		</title>
+		<script src ="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="css/Leaflet.Coordinates-0.1.5.css"/>
+		<style type="text/css">
+			#map { height : 800px; }
+			.info { padding: 10px 20px; font: 20px/22px Arial, Helvetica, sans-serif; background: rgba(255,255,255,0.7);
+				box-shadow: 0 0 15px rgba(0,0,0,0.4); border-radius: 7px; }
+					.info h4 { margin: 0 0 5px; color: #777; }
+			.legend { text-align: left; line-height: 18px; color: #555; }
+			.legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+			.hexbin-hexagon {
+				stroke: #000;
+				stroke-width: .5px;
+			}
+
+		</style>
+	</head>
+	<body>
+
+		<div id="map"></div>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/togeojson/0.16.0/togeojson.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.min.js"></script>
+		<script type="text/javascript" src="js/gpxcompute.js"></script>
+		<script type="text/javascript" src="js/basemaps.js"></script>
+		<script type="text/javascript" src="js/leaflet.hotline.js"></script>
+		<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+		<script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
+		<script src="https://rawgit.com/Asymmetrik/leaflet-d3/master/dist/leaflet-d3.js" charset="utf-8"></script>
+		<script type="text/javascript" src="js/Leaflet.Coordinates-0.1.5.min.js"></script>
+		<script src="data/Barcelona/movesBCN.dat"></script>
+
+		<script>
+
+			var gpxdir = 'data/Verviers/'
+			var map = L.map('map', {
+			fullscreenControl: true,
+		}).setView([41.385034, 2.194275], 13);
+
+			var baseMaps = {
+				"CartoDB": CartoDB,
+				"OpenTopoMap": OpenTopoMap,
+				"CartoDB Dark": CartoDB_DarkMatter,
+				"OpenStreetMap": OpenStreetMap_Mapnik,
+				"Stamen_Terrain": Stamen_Terrain,
+				"ESRI Dark Grey": Esri_DarkGreyCanvas
+			};
+
+			map.addLayer(Esri_DarkGreyCanvas)
+
+			L.control.coordinates({
+				position:"bottomleft",
+				decimals:3,
+				decimalSeperator:".",
+				labelTemplateLat:"Lat: {y}",
+				labelTemplateLng:"Lon: {x}"
+			}).addTo(map);
+
+
+			// Define style for heatmap, hexbin and hotline
+			var heatStyle = {
+				gradient : {.65: "white", .75:"#FFFF36", .85:"#FF9D00", .9:"#FF1700", .95:"#900000"},
+				minOpacity: 0.75,
+				radius: 7,
+				blur: 10,
+			};
+
+			var hexoptions = {
+				radius : 12,
+				opacity: 0.6,
+				duration: 200,
+				colorScaleExtent: [ 1, 400 ],
+				radiusScaleExtent: [ 1, undefined ],
+				colorRange: [ '#F8F9F8', '#FFFE00', '#FFA31B', '#FF331B' ],
+				colorValue: function(d) { return d.length; },
+				radiusRange: [ 5, 12 ],
+			};
+
+			var hotlinestyle = {min: 150,
+				max: 380,
+				palette: {
+					0.0: '#11D818',
+					0.33: '#FFF918',
+					0.66: '#FFB403',
+					1.0: '#FF0C02'
+				},
+				weight: 5,
+				outlineColor: randomColor(),
+				outlineWidth: 0,
+			};
+
+			// control that shows state info on hover
+			var info = L.control({position: 'bottomright'});
+
+			info.onAdd = function (map) {
+				this._div = L.DomUtil.create('div', 'info');
+				this.update();
+				return this._div;
+			};
+
+			info.update = function (props, d, dp, dm) {
+			this._div.innerHTML = (props ?
+				'<b>' + props.name + '</b><br/> <i class="fa fa-calendar" aria-hidden="true"></i> ' + props.time.substring(0, 10) +
+				'&emsp; <img src="images/runner-.png" alt="Running" style="height:20px;"> ' + d.toFixed(2) + ' km' +
+				'<br/> <b><i class="fa fa-arrow-circle-up" aria-hidden="true"></i></b> ' + dp.toFixed(1) + ' m' +
+				'&emsp; <b><i class="fa fa-arrow-circle-down" aria-hidden="true"></i></b> ' + dm.toFixed(1) + ' m'
+				: 'Hover over a track' +
+				'<br/> <i class="fa fa-calendar" aria-hidden="true"></i>' + '&emsp; <i class="fa fa-question-circle-o" aria-hidden="true"></i>' +
+				'<br/> <b><i class="fa fa-arrow-circle-up" aria-hidden="true"></i></b> '  +
+				'&emsp; <b><i class="fa fa-arrow-circle-down" aria-hidden="true"></i></b> '
+				);
+
+			};
+
+			info.addTo(map);
+
+			latlon = [];
+			lonlat = [];
+			latlonalt = [];
+
+			function randomColor() {
+				cc = '#'+Math.floor(Math.random()*16777215).toString(16);
+				return(cc);
+			}
+
+			// Define some functions to work on the line look
+			function highlightFeature(e) {
+				var layer = e.target;
+				trackLength = computeTrackLength(layer);
+				elevation = computeElevationGain(layer);
+				dplus = elevation[0];
+				dminus = elevation[1];
+
+				layer.setStyle({
+					weight: 5,
+				});
+				if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+					layer.bringToFront();
+				}
+
+				info.update(layer.feature.properties, trackLength, dplus, dminus);
+			}
+
+			function resetHighlight(e) {
+				var layer = e.target;
+
+				layer.setStyle({
+					weight: 2,
+				});
+
+				info.update();
+			}
+
+			function zoomToFeature(e) {
+				map.fitBounds(e.target.getBounds());
+			}
+
+			const delta = 100;
+			var onEachFeature = function (feature, layer) {
+				layer.on({
+					mouseover: highlightFeature,
+					mouseout: resetHighlight,
+					click: zoomToFeature
+				});
+				coords = feature.geometry.coordinates;
+				for ( var i=0; i < coords.length; ++i ){
+					latlon.push([coords[i][1], coords[i][0]]);
+					lonlat.push([coords[i][0], coords[i][1]]);
+				}
+				latlonalt = [];
+				for ( var i=0; i < coords.length; i=i+delta ){
+					latlonalt.push([coords[i][1], coords[i][0], coords[i][2]]);
+				}
+				console.log(latlonalt.length)
+			};
+
+			var customLayer = L.geoJson(null, {
+				style: function(feature) {
+					return {
+						color: 'yellow',
+						weight: 1,
+						opacity: .5,
+						};
+				},
+				onEachFeature: onEachFeature
+			});
+
+			var nMoves = moves.length;
+			var OldTracks = [];
+			for (var i = 0; i < nMoves ; i++) {
+				moveGps = omnivore.gpx(gpxdir + moves[i], null, customLayer).addTo(map);
+			}
+
+			var moveGpsLast = omnivore.gpx(gpxdir + moves[nMoves-1], null, customLayerLast);
+			//moveGps.addTo(map);
+			moveGpsLast.bringToFront();
+
+			var heatmap = L.heatLayer(latlon, heatStyle);
+			heatlayer = L.layerGroup(heatmap);
+
+			var hexLayer = L.hexbinLayer(hexoptions);
+			hexLayer.data(lonlat);
+
+			var overlayers = {
+				"Heat map": heatmap,
+				"Hexbin": hexLayer,
+				"Previous tracks": moveGps,
+			};
+
+			L.control.scale().addTo(map);
+			L.control.layers(baseMaps, overlayers, {autoZIndex:true, collapsed:false}).addTo(map);
+
+		</script>
+
+	</body>
+</html>

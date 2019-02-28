@@ -2,7 +2,7 @@
 	<html>
 		<head>
 			<meta charset="UTF-8"/>
-			
+
 			<meta name="viewport" content="width=device-width, initial-scale=1" />
 			<title>
 				Sart Tilman B5a Running
@@ -13,20 +13,20 @@
 			<link rel="stylesheet" href="lib/leaflet/Leaflet.Coordinates-0.1.5.css"/>
 			<style type="text/css">
 				#map { height : 800px; }
-				.info { padding: 10px 20px; font: 20px/22px Arial, Helvetica, sans-serif; background: rgba(255,255,255,0.7); 
-					box-shadow: 0 0 15px rgba(0,0,0,0.4); border-radius: 7px; } 
+				.info { padding: 10px 20px; font: 20px/22px Arial, Helvetica, sans-serif; background: rgba(255,255,255,0.7);
+					box-shadow: 0 0 15px rgba(0,0,0,0.4); border-radius: 7px; }
 						.info h4 { margin: 0 0 5px; color: #777; }
-				.legend { text-align: left; line-height: 18px; color: #555; } 
+				.legend { text-align: left; line-height: 18px; color: #555; }
 				.legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
 				.hexbin-hexagon {
 					stroke: #000;
 					stroke-width: .5px;
 				}
-				
+
 			</style>
 		</head>
 		<body>
-			
+
 			<div id="map"></div>
 			<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 			<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/togeojson/0.16.0/togeojson.js"></script>
@@ -39,47 +39,26 @@
 			<script type="text/javascript" src="lib/leaflet/Leaflet.Coordinates-0.1.5.min.js"></script>
 			<script src="data/SartTilman/movesAll.js"></script>
 			<script src="data/SartTilman/movesRallye.js"></script>
-			
+			<script src="js/basemaps.js"></script>
+
 			<script>
-				
+
 				var gpxdir = 'data/SartTilman/'
 				var map = L.map('map', {
 					fullscreenControl: true,
 					}).setView([50.58,5.57], 13);
-				
-				var OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-					maxZoom: 19,
-					attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-				});
-				
-				var CartoDB = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-					maxZoom: 18, 
-					attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
-				  });
-				
-				var CartoDB_DarkMatter = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
-					attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-					subdomains: 'abcd',
-					maxZoom: 19
-				});
-				
-				var Stamen_Terrain = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.{ext}', {
-					attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-					subdomains: 'abcd',
-					minZoom: 0,
-					maxZoom: 18,
-					ext: 'png'
-				});
 
 				var baseMaps = {
 					"CartoDB": CartoDB,
+					"OpenTopoMap": OpenTopoMap,
 					"CartoDB Dark": CartoDB_DarkMatter,
 					"OpenStreetMap": OpenStreetMap_Mapnik,
-					"Stamen_Terrain": Stamen_Terrain
+					"Stamen_Terrain": Stamen_Terrain,
+					"ESRI Dark Grey": Esri_DarkGreyCanvas
 				};
-				
+
 				map.addLayer(CartoDB)
-				
+
 				L.control.coordinates({
 					position:"bottomleft",
 					decimals:3,
@@ -87,14 +66,14 @@
 					labelTemplateLat:"Lat: {y}",
 					labelTemplateLng:"Lon: {x}"
 				}).addTo(map);
-				
+
 				var heatStyle = {
 					gradient : {.65: "white", .75:"#FFFF36", .85:"#FF9D00", .9:"#FF1700", .95:"#900000", 1:"black"},
 					minOpacity: 0.75,
 					radius: 4,
 					blur: 4,
 				};
-				
+
 				// control that shows state info on hover
 				var info = L.control({position: 'bottomright'});
 
@@ -107,15 +86,15 @@
 				info.update = function (props, d) {
 				this._div.innerHTML = (props ?
 					'<b>' + props.name + '</b><br />' + props.time.substring(0, 10) +
-					'<br/>' + d.toFixed(2) + ' km' 
+					'<br/>' + d.toFixed(2) + ' km'
 					: 'Hover over <br> a track');
 				};
 
 				info.addTo(map);
-				
+
 				latlon = [];
 				lonlat = [];
-				
+
 				var haversineDistance = function (lon1, lat1, lon2, lat2) {
 					var toRad = function (x) {
 						return x * Math.PI / 180;
@@ -133,38 +112,38 @@
 
 					return d;
 				}
-				
+
 				var computeTrackLength = function (layer){
 					latlonalt = layer._latlngs;
 					var gpxLength = 0;
 					for ( var i=0; i < latlonalt.length-1; ++i ){
-						gpxLength += haversineDistance(latlonalt[i].lng, latlonalt[i].lat, 
+						gpxLength += haversineDistance(latlonalt[i].lng, latlonalt[i].lat,
 						latlonalt[i+1].lng, latlonalt[i+1].lat)
 					}
 					//console.log("Distance = " + cumDist.toFixed(3));
 					return gpxLength;
-					
+
 				};
-				
-							
+
+
 				function randomColor() {
 					cc = '#'+Math.floor(Math.random()*16777215).toString(16);
 					//console.log(cc)
 					return(cc);
 				}
-				
+
 				var pushCoords = function(feature) {
 						coords = feature.geometry.coordinates;
-						for ( var i=0; i < coords.length; ++i ){ 
+						for ( var i=0; i < coords.length; ++i ){
 							latlon.push([coords[i][1], coords[i][0]]);
 							lonlat.push([coords[i][0], coords[i][1]]);
 							}
 						};
-						
+
 				// Define some functions to work on the line look
 				function highlightFeature(e) {
 					var layer = e.target;
-					trackLength = computeTrackLength(layer);					
+					trackLength = computeTrackLength(layer);
 					layer.setStyle({
 						weight: 5,
 					});
@@ -174,21 +153,21 @@
 
 					info.update(layer.feature.properties, trackLength);
 				}
-				
+
 				function resetHighlight(e) {
 					var layer = e.target;
-				
+
 					layer.setStyle({
 						weight: 2,
 					});
-					
+
 					info.update();
 				}
-				
+
 				function zoomToFeature(e) {
 					map.fitBounds(e.target.getBounds());
 				}
-						
+
 				var onEachFeature = function (feature, layer) {
 					layer.on({
 						mouseover: highlightFeature,
@@ -209,32 +188,32 @@
 					console.log('Mean latitude:' + latmean);
 					L.circleMarker([latmean, lonmean], {radius: 5, color: 'red'}).addTo(map);
 				};
-			
-					
+
+
 				var customLayer = L.geoJson(null, {
 					style: function(feature) {
-						return { 
-							color: randomColor(), 
-							weight: 3, 
+						return {
+							color: randomColor(),
+							weight: 3,
 							opacity: 1,
 							};
 					},
 					onEachFeature: onEachFeature
 				});
-				
-				
+
+
 				var customLayerLast = L.geoJson(null, {
 					style: function(feature) {
-						return { 
-							color: 'yellow', 
-							weight: 20, 
+						return {
+							color: 'yellow',
+							weight: 20,
 							opacity: .55
 							};
-					} 
+					}
 				});
-			
+
 				var nMoves = moves.length;
-				var OldTracks = []; 
+				var OldTracks = [];
 				for (var i = 0; i < nMoves ; i++) {
 					var moveGps = omnivore.gpx(gpxdir + moves[i], null, customLayer);
 					console.log(moveGps);
@@ -243,14 +222,14 @@
 						OldTracks.push(moveGps);
 					}
 				}
-				
+
 				var moveGps = omnivore.gpx(gpxdir + moves[nMoves-1], null, customLayerLast);
 				moveGps.addTo(map);
 				moveGps.bringToFront();
-				
+
 				var heatmap = L.heatLayer(latlon, heatStyle);
 				heatlayer = L.layerGroup(heatmap);
-				
+
 				var hexoptions = {
 					radius : 12,
 					opacity: 0.6,
@@ -264,18 +243,18 @@
 
 				var hexLayer = L.hexbinLayer(hexoptions);
 				hexLayer.data(lonlat);
-				
-				
+
+
 				var startpoint = [50.582, 5.566];
 				var distCircles = []
 				for(count = 1; count < 5; count++){
-					dCircle = L.circle(startpoint, count * 1000., 
+					dCircle = L.circle(startpoint, count * 1000.,
 					{color: "#A7A7A7", fillColor: "None", dashArray: '20,15'});
 					dCircle.addTo(map);
 					distCircles.push(dCircle);
 				}
 				circleLayer = L.layerGroup(distCircles);
-				
+
 				var overlayers = {
 					"Heat map": heatmap,
 					"Hexbin": hexLayer,
@@ -283,11 +262,10 @@
 					"Last run": moveGps,
 					"Distance circles": circleLayer
 				};
-				
-				L.control.layers(baseMaps, overlayers, {autoZIndex:true, collapsed:false}).addTo(map);	
-				
+
+				L.control.layers(baseMaps, overlayers, {autoZIndex:true, collapsed:false}).addTo(map);
+
 			</script>
-			
+
 		</body>
 	</html>
-
